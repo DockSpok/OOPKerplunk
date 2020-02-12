@@ -146,7 +146,7 @@ namespace Loja.Classes
 
                 using (SqlCommand sqlCommand = new SqlCommand())
                 {
-                    sqlCommand.CommandText = @"Delete * From Cliente Where Codigo = @codigo";
+                    sqlCommand.CommandText = @"Delete From Cliente Where Codigo = @codigo";
                     sqlCommand.Connection = sqlConnection;
                     sqlCommand.Parameters.AddWithValue("@codigo", _codigo);
                     
@@ -158,7 +158,6 @@ namespace Loja.Classes
                     {
                         throw;
                     }
-
                 }
             }
         }

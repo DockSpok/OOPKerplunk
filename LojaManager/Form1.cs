@@ -21,8 +21,13 @@ namespace LojaManager
             dataGridViewClientes.AllowUserToAddRows = false;
             dataGridViewClientes.AllowUserToDeleteRows = false;
 
-            dadosBindingSource.DataSource = Cliente.TodosClientes();
+            // TODO: não vi a implementação disso nos videos. Estudar:
+            dataGridViewClientes.EditMode = DataGridViewEditMode.EditProgrammatically;
+            dataGridViewClientes.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
+            // Puxando os dados do banco (via Cliente.TodosClientes()) para uma lista...
+            dadosBindingSource.DataSource = new BindingList<Cliente>(Cliente.TodosClientes());
+            // ... e carregando o grid com os dados da lista.
             dataGridViewClientes.DataSource = dadosBindingSource;
 
             txtCodigo.DataBindings.Add("Text", dadosBindingSource, "Codigo", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -56,7 +61,15 @@ namespace LojaManager
 
         private void btnApagar_Click(object sender, EventArgs e)
         {
-
+            if (MessageBox.Show("Deseja realmente excluir esse cliente?", "Confirme."
+                                , MessageBoxButtons.YesNo, MessageBoxIcon.Question) 
+                                == DialogResult.Yes)
+            {
+                // Remove o item corrente do Banco mas não remove da lista corrente.
+                ((Cliente)dadosBindingSource.Current).Apagar();
+                // Remove o item corrente da lista mas não remove do banco.
+                dadosBindingSource.RemoveCurrent();
+            }
         }
 
         private void btnNovo_Click(object sender, EventArgs e)
