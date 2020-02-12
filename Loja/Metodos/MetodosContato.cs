@@ -104,6 +104,159 @@ namespace Loja.Classes
             }
         }
 
+        public void Apagar()
+        {
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    sqlConnection.Open();
+                }
+                catch (Exception e)
+                {
+                    throw;
+                }
+
+                using (SqlCommand sqlCommand = new SqlCommand())
+                {
+                    sqlCommand.CommandText = @"Delete * From Contato Where Codigo = @codigo";
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.Parameters.AddWithValue("@codigo", _codigo);
+
+                    try
+                    {
+                        sqlCommand.ExecuteNonQuery();
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
+            }
+        }
+
+        public void Ler(int codigoContato)
+        {
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    sqlConnection.Open();
+                }
+                catch (Exception)
+                {
+                    throw new Loja.Excecoes.ValidacaoException("Não foi possível estabelecer conexão com o Banco de Dados.");
+                }
+
+                using (SqlCommand sqlCommand = new SqlCommand())
+                {
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandText = @"Select * From Contato Where Codigo = @codigo";
+                    sqlCommand.Parameters.AddWithValue("@codigo", codigoContato);
+
+                    using (SqlDataReader sqlDataReader = sqlCommand.ExecuteReader())
+                    {
+                        if (sqlDataReader.HasRows)
+                        {
+                            sqlDataReader.Read();
+
+                            _codigo = sqlDataReader.GetInt32(sqlDataReader.GetOrdinal("Codigo"));
+                            _dadosContato = sqlDataReader.GetString(sqlDataReader.GetOrdinal("DadosContato"));
+                            _tipo = sqlDataReader.GetString(sqlDataReader.GetOrdinal("Tipo"));
+                            _codigoCliente = sqlDataReader.GetInt32(sqlDataReader.GetOrdinal("CodigoCliente"));
+                        }
+                    }
+
+                    _isNew = false;
+                    _isModified = false;
+                }
+            }
+        }
+
+        public static Int32 Proximo()
+        {
+            Int32 _resultado = 0;
+
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    sqlConnection.Open();
+                }
+                catch (Exception)
+                {
+                    throw new Loja.Excecoes.ValidacaoException("Não foi possível estabelecer conexão com o Banco de Dados.");
+                }
+
+                using (SqlCommand sqlCommand = new SqlCommand())
+                {
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandText = @"Select Max(Codigo) + 1 From Contato";
+
+                    using (SqlDataReader sqlDataReader = sqlCommand.ExecuteReader())
+                    {
+                        if (sqlDataReader.HasRows)
+                        {
+                            sqlDataReader.Read();
+                            // o Reader só vai ter uma linha nesse momento...
+                            _resultado = sqlDataReader.GetInt32(0);
+                        }
+                    }
+                }
+            }
+
+            return _resultado;
+        }
+
+        public static List<Contato> TodosContatos(int codigoCliente)
+        {
+            List<Contato> _resultado = new List<Contato>();
+
+            using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    sqlConnection.Open();
+                }
+                catch (Exception e)
+                {
+                    throw new Loja.Excecoes.ValidacaoException("Não foi possível estabelecer conexão com o Banco de Dados.", e);
+                }
+
+                using (SqlCommand sqlCommand = new SqlCommand())
+                {
+                    sqlCommand.Connection = sqlConnection;
+                    sqlCommand.CommandText = @"Select * From Contato Where CodigoCliente = @codigoCliente";
+                    sqlCommand.Parameters.AddWithValue("@codigoCliente", codigoCliente);
+
+                    using (SqlDataReader sqlDataReader = sqlCommand.ExecuteReader())
+                    {
+                        if (sqlDataReader.HasRows)
+                        {
+                            while (sqlDataReader.Read())
+                            {
+                                Contato contato = new Contato();
+                                contato._codigo = sqlDataReader.GetInt32(sqlDataReader.GetOrdinal("Codigo"));
+                                contato._dadosContato = sqlDataReader.GetString(sqlDataReader.GetOrdinal("DadosContato"));
+                                contato._tipo = sqlDataReader.GetString(sqlDataReader.GetOrdinal("Tipo"));
+                                contato._codigoCliente = sqlDataReader.GetInt32(sqlDataReader.GetOrdinal("CodigoCliente"));
+
+                                //if (_resultado == null)
+                                //{
+                                //    _resultado = new List<Contato>();
+                                //}
+
+                                contato._isNew = false;
+
+                                _resultado.Add(contato);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return _resultado;
+        }
 
         public void Dispose()
         {

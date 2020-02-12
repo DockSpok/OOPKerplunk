@@ -62,5 +62,14 @@ namespace Loja.Classes
             get { return _tipo; }
             set { _isModified = true; _tipo = value; }
         }
+
+        private int _codigoCliente;
+
+        public int CodigoCliente
+        {
+            get { return _codigoCliente; }
+            set { _codigoCliente = value; }
+        }
+
     }
 }

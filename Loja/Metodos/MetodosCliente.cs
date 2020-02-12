@@ -45,7 +45,7 @@ namespace Loja.Classes
                 }
                 catch (Exception e)
                 {
-                    throw;
+                    throw new Exception("Não foi possível estabelecer a conexão com o Banco de Dados.", e);
                 }
 
                 using (SqlCommand sqlCommand = new SqlCommand())
@@ -56,13 +56,14 @@ namespace Loja.Classes
                     sqlCommand.Parameters.AddWithValue("@codigo", _codigo);
                     sqlCommand.Parameters.AddWithValue("@nome", _nome);
                     sqlCommand.Parameters.AddWithValue("@tipo", _tipo);
+                    // TODO: bug se usuário não altera a data atual, não popula o grid.
                     sqlCommand.Parameters.AddWithValue("@dataCadastro", _dataCadastro);
 
                     try
                     {
                         sqlCommand.ExecuteNonQuery();
-                        // A partir do momento, se não lançou uma exceção é porque já persistiu, portano
-                        // o estado já deve mudar para não Novo:
+                        // A partir desse momento, se não lançou uma exceção é porque já persistiu, portano
+                        // o estado já deve mudar para 'não-Novo':
                         _isNew = false;
                     }
                     catch (Exception)
@@ -85,7 +86,7 @@ namespace Loja.Classes
                 }
                 catch (Exception e)
                 {
-                    throw;
+                    throw new Exception("Não foi possível estabelecer a conexão com o Banco de Dados.", e);
                 }
 
                 using (SqlCommand sqlCommand = new SqlCommand())
@@ -162,7 +163,7 @@ namespace Loja.Classes
             }
         }
 
-        public void Ler(int codigoSolicitado)
+        public void Ler(int codigoCliente)
         {
             using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
@@ -179,7 +180,7 @@ namespace Loja.Classes
                 {
                     sqlCommand.Connection = sqlConnection;
                     sqlCommand.CommandText = @"Select * From Cliente Where Codigo = @codigo";
-                    sqlCommand.Parameters.AddWithValue("@codigo", codigoSolicitado);
+                    sqlCommand.Parameters.AddWithValue("@codigo", codigoCliente);
 
                     using (SqlDataReader sqlDataReader = sqlCommand.ExecuteReader())
                     {
@@ -191,6 +192,8 @@ namespace Loja.Classes
                             _nome = sqlDataReader.GetString(sqlDataReader.GetOrdinal("Nome"));
                             _tipo = sqlDataReader.GetInt32(sqlDataReader.GetOrdinal("Tipo"));
                             _dataCadastro = sqlDataReader.GetDateTime(sqlDataReader.GetOrdinal("DataCadastro"));
+
+                            //_contatos = Contato.TodosContatos(_codigo);
                         }
                     }
 
@@ -264,15 +267,17 @@ namespace Loja.Classes
                         {
                             while (sqlDataReader.Read())
                             {
-                                Cliente cli = new Cliente();
-                                cli._codigo = sqlDataReader.GetInt32(sqlDataReader.GetOrdinal("Codigo"));
-                                cli._nome = sqlDataReader.GetString(sqlDataReader.GetOrdinal("Nome"));
-                                cli._tipo = sqlDataReader.GetInt32(sqlDataReader.GetOrdinal("Tipo"));
-                                cli._dataCadastro = sqlDataReader.GetDateTime(sqlDataReader.GetOrdinal("DataCadastro"));
+                                Cliente cliente = new Cliente();
+                                cliente._codigo = sqlDataReader.GetInt32(sqlDataReader.GetOrdinal("Codigo"));
+                                cliente._nome = sqlDataReader.GetString(sqlDataReader.GetOrdinal("Nome"));
+                                cliente._tipo = sqlDataReader.GetInt32(sqlDataReader.GetOrdinal("Tipo"));
+                                cliente._dataCadastro = sqlDataReader.GetDateTime(sqlDataReader.GetOrdinal("DataCadastro"));
 
-                                cli._isNew = false;
+                                cliente._contatos = Contato.TodosContatos(cliente._codigo);
 
-                                _resultado.Add(cli);
+                                cliente._isNew = false;
+
+                                _resultado.Add(cliente);
                             }
                         }
                     }
