@@ -210,7 +210,7 @@ namespace Loja.Classes
 
         public static List<Contato> TodosContatos(int codigoCliente)
         {
-            List<Contato> _resultado = new List<Contato>();
+            List<Contato> _resultado = null; // Porque um cliente pode não ter contado algum.
 
             using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
@@ -241,10 +241,10 @@ namespace Loja.Classes
                                 contato._tipo = sqlDataReader.GetString(sqlDataReader.GetOrdinal("Tipo"));
                                 contato._codigoCliente = sqlDataReader.GetInt32(sqlDataReader.GetOrdinal("CodigoCliente"));
 
-                                //if (_resultado == null)
-                                //{
-                                //    _resultado = new List<Contato>();
-                                //}
+                                if (_resultado == null)
+                                {
+                                    _resultado = new List<Contato>();
+                                }
 
                                 contato._isNew = false;
 

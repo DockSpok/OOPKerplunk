@@ -73,6 +73,7 @@
             // 
             this.txtCodigo.Location = new System.Drawing.Point(594, 106);
             this.txtCodigo.Name = "txtCodigo";
+            this.txtCodigo.ReadOnly = true;
             this.txtCodigo.Size = new System.Drawing.Size(100, 20);
             this.txtCodigo.TabIndex = 2;
             // 
@@ -134,7 +135,7 @@
             this.btnGravar.TabIndex = 9;
             this.btnGravar.Text = "Gravar";
             this.btnGravar.UseVisualStyleBackColor = true;
-            this.btnGravar.Click += new System.EventHandler(this.Gravar_Click);
+            this.btnGravar.Click += new System.EventHandler(this.btnGravar_Click);
             // 
             // btnNovo
             // 

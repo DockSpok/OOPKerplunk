@@ -28,7 +28,7 @@ namespace Loja.Classes
         #endregion observer
 
         private int _codigo;
-
+        [DisplayName("Código")]
         public int Codigo
         {
             get { return _codigo; }
@@ -48,7 +48,7 @@ namespace Loja.Classes
         }
 
         private string _nome;
-
+        [DisplayName("Nome do Cliente")]
         public string Nome
         {
             get { return _nome; }
@@ -75,7 +75,7 @@ namespace Loja.Classes
 
         // Usamos propfull para criar variável privada e propriedade ao mesmo tempo.
         private DateTime _dataCadastro = DateTime.MinValue;
-
+        [DisplayName("Data do Cadastro")]
         public DateTime DataCadastro
         {
             get { return _dataCadastro; }

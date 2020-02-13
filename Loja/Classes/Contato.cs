@@ -28,7 +28,7 @@ namespace Loja.Classes
         #endregion observer
 
         private int _codigo;
-
+        [DisplayName("Código do Contato")]
         public int Codigo
         {
             get { return _codigo; }
@@ -48,7 +48,7 @@ namespace Loja.Classes
         }
 
         private string _dadosContato;
-
+        [DisplayName("Dados de Contato")]
         public string DadosContato
         {
             get { return _dadosContato; }
@@ -64,7 +64,7 @@ namespace Loja.Classes
         }
 
         private int _codigoCliente;
-
+        [DisplayName("Código do Cliente")]
         public int CodigoCliente
         {
             get { return _codigoCliente; }

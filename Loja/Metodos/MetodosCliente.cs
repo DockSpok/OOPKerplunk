@@ -272,7 +272,7 @@ namespace Loja.Classes
                                 cliente._tipo = sqlDataReader.GetInt32(sqlDataReader.GetOrdinal("Tipo"));
                                 cliente._dataCadastro = sqlDataReader.GetDateTime(sqlDataReader.GetOrdinal("DataCadastro"));
 
-                                cliente._contatos = Contato.TodosContatos(cliente._codigo);
+                                cliente.Contatos = Contato.TodosContatos(cliente._codigo);
 
                                 cliente._isNew = false;
 
